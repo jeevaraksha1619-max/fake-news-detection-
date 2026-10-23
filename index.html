@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fake News Detection System</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px #0f172a15;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1d4ed8;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 25px 0 10px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      padding: 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 16px;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      outline: 2px solid #93c5fd;
+      border-color: #2563eb;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 9px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    #result {
+      display: none;
+      margin-top: 22px;
+      padding: 16px;
+      border-radius: 10px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .warning {
+      background: #fff7ed;
+      color: #9a3412;
+    }
+
+    .neutral {
+      background: #eff6ff;
+      color: #1e40af;
+    }
+
+    .note {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.6;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <h1>Fake News Detection</h1>
+
+    <p class="subtitle">
+      Analyse news text and check for potentially
+      suspicious wording.
+    </p>
+
+    <form id="newsForm">
+      <label for="newsText">Enter News Article</label>
+
+      <textarea
+        id="newsText"
+        placeholder="Paste a news headline or article here..."
+        required
+      ></textarea>
+
+      <button type="submit">Analyze News</button>
+    </form>
+
+    <section id="result" aria-live="polite"></section>
+
+    <p class="note">
+      Disclaimer: This educational demo uses simple keyword
+      matching, not artificial intelligence or fact-checking.
+      Its results cannot establish whether news is true or false.
+      Always consult reliable sources.
+    </p>
+  </main>
+
+  <script>
+    const form = document.getElementById("newsForm");
+    const input = document.getElementById("newsText");
+    const result = document.getElementById("result");
+
+    const suspiciousPhrases = [
+      "shocking news",
+      "secret revealed",
+      "share immediately",
+      "100% guaranteed",
+      "miracle cure",
+      "forward to everyone",
+      "you won't believe",
+      "click here immediately"
+    ];
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const news = input.value.trim().toLowerCase();
+
+      if (!news) {
+        result.style.display = "block";
+        result.className = "warning";
+        result.textContent = "Please enter a news article.";
+        return;
+      }
+
+      const found = suspiciousPhrases.filter(
+        phrase => news.includes(phrase)
+      );
+
+      result.style.display = "block";
+
+      if (found.length > 0) {
+        result.className = "warning";
+        result.replaceChildren();
+
+        const heading = document.createElement("strong");
+        heading.textContent = "Suspicious wording detected";
+
+        const details = document.createElement("p");
+        details.textContent =
+          "Matched phrases: " + found.join(", ");
+
+        const explanation = document.createElement("p");
+        explanation.textContent =
+          "This wording may deserve closer checking, but it does not prove the news is fake.";
+
+        result.append(heading, details, explanation);
+      } else {
+        result.className = "neutral";
+        result.textContent =
+          "No listed suspicious phrases found. This does not mean the news is true. Please verify it using reliable sources.";
+      }
+    });
+  </script>
+</body>
+</html>
